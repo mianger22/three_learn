@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 // Настройка проекта
 const scene = new THREE.Scene();
+scene.background = new THREE.Color( 'lightpink' );
 
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 
     1000 );
@@ -14,7 +15,7 @@ document.body.appendChild( renderer.domElement );
 
 // Создание модели
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 'pink' } );
+const material = new THREE.MeshBasicMaterial( { color: 'red' } );
 const cube = new THREE.Mesh( geometry, material );
 
 // Добавление на сцену
