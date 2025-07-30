@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-// Настройка проекта
+// ------------------- Настройка проекта -------------------------------
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('white');
-// --- Добавлен туман, на будущее
+// Добавлен туман, на будущее
 scene.fog = new THREE.Fog(0x59472b, 1, 1000);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,12 +15,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
-// Создаём контейнер для дома
+// --------------------------- Создаём контейнер для дома -----------------
 const house = new THREE.Group();
 // house.rotation.y = 8.5;
 scene.add(house);
 
-// Общая функция отрисовки ребер
+// --------------------------- Общая функция отрисовки ребер ---------------
 function show_me_ribs(figureGeometry) {
     // Создаем геометрию для рёбер
     const edgesGeometry = new THREE.EdgesGeometry(figureGeometry);
@@ -89,9 +89,9 @@ doorMesh.position.z = 2 + 0.01;
 
 house.add(doorMesh);
 
-// --------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------
 
-// Анимирование модели
+// Визуализируем сцену
 function animate() {
     renderer.render(scene, camera);
 };
