@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 // ------------------- Настройка проекта -------------------------------
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('white');
 // Добавлен туман, на будущее
@@ -16,11 +17,13 @@ renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 // --------------------------- Создаём контейнер для дома -----------------
+
 const house = new THREE.Group();
 // house.rotation.y = 8.5;
 scene.add(house);
 
 // --------------------------- Общая функция отрисовки ребер ---------------
+
 function show_me_ribs(figureGeometry) {
     // Создаем геометрию для рёбер
     const edgesGeometry = new THREE.EdgesGeometry(figureGeometry);
@@ -89,9 +92,8 @@ doorMesh.position.z = 2 + 0.01;
 
 house.add(doorMesh);
 
-//------------------------------------------------------------------
+//------------------------------- Визуализация сцены --------------------
 
-// Визуализируем сцену
 function animate() {
     renderer.render(scene, camera);
 };
