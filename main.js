@@ -90,6 +90,19 @@ doorMesh.position.z = 2 + 0.01;
 
 house.add(doorMesh);
 
+//-------------------------- Создание ручки двери ------------------
+
+// Создаем форму
+const doorHandleGeometry = new THREE.CircleGeometry(0.05);
+// Наполняем цветом
+const doorHandleMaterial = new THREE.MeshBasicMaterial({color: 'black'});
+// Смешиваем
+const doorHandleMesh = new THREE.Mesh(doorHandleGeometry, doorHandleMaterial);
+// Делаем, чтобы было видно
+doorHandleMesh.position.set(-0.23, 0, 2 + 0.02);
+
+house.add(doorHandleMesh);
+
 //---------------------------- Анимация дождя ----------------------
 
 // Создаем массив капель дождя
