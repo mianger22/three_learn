@@ -7,18 +7,17 @@ scene.background = new THREE.Color('gray');
 scene.fog = new THREE.FogExp2(0x59472b, 0.1, 1000);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 10.5;
-camera.position.y = 1.5;
+camera.position.set(0, 1.5, 10.5);
+camera.lookAt(0, 0, 0);
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setAnimationLoop(animate);
+renderer.setAnimationLoop(animation);
 document.body.appendChild(renderer.domElement);
 
 // --------------------------- Создаём контейнер для дома -----------------
 
 const house = new THREE.Group();
-// house.rotation.y = 8.5;
 scene.add(house);
 
 // --------------------------- Общая функция отрисовки ребер ---------------
@@ -91,8 +90,51 @@ doorMesh.position.z = 2 + 0.01;
 
 house.add(doorMesh);
 
+//---------------------------- Анимация дождя ----------------------
+
+// Создаем массив капель дождя
+const rainCount = 10000; // количество капель
+const rainGeometry = new THREE.BufferGeometry();
+const positions = [];
+// Создаем материал для капель дождя
+const rainMaterial = new THREE.PointsMaterial({color: 0xaaaaaa, size: 0.2});
+// Создаем объект Points для дождя
+const rain = new THREE.Points(rainGeometry, rainMaterial);
+
+for (let i = 0; i < rainCount; i++) {
+  // случайные позиции в области
+  const x = Math.random() * 100 - 50; // от -50 до +50 по X
+  const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
+  const z = Math.random() * 100 - 50; // от -50 до +50 по Z
+
+  positions.push(x, y, z);
+}
+
+rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+(function rain_animation() {
+  requestAnimationFrame(rain_animation);
+
+  const positions = rain.geometry.attributes.position.array;
+
+  for (let i = 0; i < positions.length; i +=3) {
+    // падаем вниз по Y
+    positions[i +1] -= Math.random() * 0.5; // скорость падения
+
+    // если капля упала ниже определенного уровня, возвращаем ее наверх
+    if (positions[i +1] < -10) {
+      positions[i +1] = Math.random() * 50 +10;
+    }
+  }
+
+  // Обновляем атрибут позиции
+  rain.geometry.attributes.position.needsUpdate = true;
+})();
+
+scene.add(rain);
+
 //------------------------------- Визуализация сцены --------------------
 
-function animate() {
+function animation() {
     renderer.render(scene, camera);
 };
