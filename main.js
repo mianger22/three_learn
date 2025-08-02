@@ -106,7 +106,8 @@ house.add(doorHandleMesh);
 //-------------------------- Создание бочки воды -------------------
 
 // Создаем форму
-const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, 0.1);
+let barrelHeight = 0.0;
+const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
 // Раскрашиваем
 const barrelColor = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
 // Визуализируем
@@ -116,12 +117,26 @@ const barrelMesh = new THREE.Mesh(barrelShape, barrelColor);
 const barrelEdges = show_me_ribs(new THREE.CylinderGeometry(0.5, 0.5, 0.7));
 
 // Позиционируем сетку и меш
-barrelMesh.position.set(1.3, -0.313, 5);
+barrelMesh.position.set(1.3, -0.35, 5);
 barrelEdges.position.set(1.3, 0, 5);
 
 // Добавляем в контейнер дома
 house.add(barrelMesh);
 house.add(barrelEdges);
+
+(function animation_filling_barrel() {
+  let customInterval = setInterval(() => {
+    barrelHeight += 0.1;
+
+    barrelMesh.geometry.dispose();
+    barrelMesh.geometry = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
+    barrelMesh.position.y += 0.05;
+
+    if (barrelHeight > 0.5) {
+      clearInterval(customInterval);
+    }
+  }, 3000);
+})();
 
 //---------------------------- Анимация дождя ----------------------
 
