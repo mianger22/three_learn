@@ -12,7 +12,7 @@ camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setAnimationLoop(animation);
+renderer.setAnimationLoop(() => renderer.render(scene, camera));
 document.body.appendChild(renderer.domElement);
 
 // --------------------------- Создаём контейнер для дома -----------------
@@ -37,7 +37,7 @@ function show_me_ribs(figureGeometry) {
 const skeletonGeometry = new THREE.BoxGeometry(4, 2.5, 4);
 // Задаём цвет граням
 const skeletonMaterial = new THREE.MeshBasicMaterial({ color: 'brown' });
-// Смешиваем цвет и форму
+// Смешиваем
 const skeletonMesh = new THREE.Mesh(skeletonGeometry, skeletonMaterial);
 // Очерчиваем ребра
 const skeletonEdges = show_me_ribs(skeletonGeometry);
@@ -103,6 +103,26 @@ doorHandleMesh.position.set(-0.23, 0, 2 + 0.02);
 
 house.add(doorHandleMesh);
 
+//-------------------------- Создание бочки воды -------------------
+
+// Создаем форму
+const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, 0.1);
+// Раскрашиваем
+const barrelColor = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+// Визуализируем
+const barrelMesh = new THREE.Mesh(barrelShape, barrelColor);
+
+// Чертим сетку полного цилиндра
+const barrelEdges = show_me_ribs(new THREE.CylinderGeometry(0.5, 0.5, 0.7));
+
+// Позиционируем сетку и меш
+barrelMesh.position.set(1.3, -0.313, 5);
+barrelEdges.position.set(1.3, 0, 5);
+
+// Добавляем в контейнер дома
+house.add(barrelMesh);
+house.add(barrelEdges);
+
 //---------------------------- Анимация дождя ----------------------
 
 // Создаем массив капель дождя
@@ -145,9 +165,3 @@ rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions
 })();
 
 scene.add(rain);
-
-//------------------------------- Визуализация сцены --------------------
-
-function animation() {
-    renderer.render(scene, camera);
-};
