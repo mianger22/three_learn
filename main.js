@@ -31,152 +31,123 @@ function show_me_ribs(figureGeometry) {
     return new THREE.LineSegments(edgesGeometry, lineMaterial);
 }
 
-//-------------------------- Создание каркаса дома ------------------------
+// --------------------------- Создание объектов ----------------------------
 
-// Создаем геометрию каркаса
-const skeletonGeometry = new THREE.BoxGeometry(4, 2.5, 4);
-// Задаём цвет граням
-const skeletonMaterial = new THREE.MeshBasicMaterial({ color: 'brown' });
-// Смешиваем
-const skeletonMesh = new THREE.Mesh(skeletonGeometry, skeletonMaterial);
-// Очерчиваем ребра
-const skeletonEdges = show_me_ribs(skeletonGeometry);
+(function creating_skeleton_house() {
+  const skeletonGeometry = new THREE.BoxGeometry(4, 2.5, 4);
+  const skeletonMesh = new THREE.Mesh(skeletonGeometry, new THREE.MeshBasicMaterial({ color: 'brown' }));
+  const skeletonEdges = show_me_ribs(skeletonGeometry);
 
-// Добавляем меш в сцену
-house.add(skeletonMesh);
-// Добавляем сетку в сцену
-house.add(skeletonEdges);
-
-//-------------------------- Создание газона ------------------------
-
-// Создаем геометрию 
-const lawnGeometry = new THREE.BoxGeometry(6.5, 0.2, 7.5);
-// Задаём цвет граням
-const lawnMaterial = new THREE.MeshBasicMaterial({ color: 'green' });
-// Смешиваем цвет и форму
-const lawnMesh = new THREE.Mesh(lawnGeometry, lawnMaterial);
-// Опускание до нужного уровня 
-lawnMesh.position.y = -1;
-// Добавляем меш в сцену
-house.add(lawnMesh);
-
-//-------------------------- Создание крыши ------------------------
-
-// Создаем геометрию крыши
-const roofGeometry = new THREE.ConeGeometry(3.5, 1.5, 4);
-// Задаём цвет граням
-const roofMaterial = new THREE.MeshBasicMaterial({color: 'darkblue'});
-// Смешиваем цвет и форму
-const roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
-// Очерчиваем ребра
-const roofEdges = show_me_ribs(roofGeometry);
-
-roofMesh.position.y = roofEdges.position.y = 1.75;
-roofMesh.rotation.y = roofEdges.rotation.y = Math.PI * 0.25;
-
-house.add(roofMesh);
-house.add(roofEdges);
-
-//-------------------------- Создание двери ------------------------
-
-// Создаем форму
-const doorGeometry = new THREE.PlaneGeometry(1, 1.3);
-// Наполняем цветом
-const doorMaterial = new THREE.MeshBasicMaterial({color: 'pink'});
-// Смешиваем 
-const doorMesh = new THREE.Mesh(doorGeometry, doorMaterial);
-// Делаем, чтобы было видно
-doorMesh.position.z = 2 + 0.01;
-
-house.add(doorMesh);
-
-//-------------------------- Создание ручки двери ------------------
-
-// Создаем форму
-const doorHandleGeometry = new THREE.CircleGeometry(0.05);
-// Наполняем цветом
-const doorHandleMaterial = new THREE.MeshBasicMaterial({color: 'black'});
-// Смешиваем
-const doorHandleMesh = new THREE.Mesh(doorHandleGeometry, doorHandleMaterial);
-// Делаем, чтобы было видно
-doorHandleMesh.position.set(-0.23, 0, 2 + 0.02);
-
-house.add(doorHandleMesh);
-
-//-------------------------- Создание бочки воды -------------------
-
-// Создаем форму
-let barrelHeight = 0.0;
-const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
-// Раскрашиваем
-const barrelColor = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
-// Визуализируем
-const barrelMesh = new THREE.Mesh(barrelShape, barrelColor);
-
-// Чертим сетку полного цилиндра
-const barrelEdges = show_me_ribs(new THREE.CylinderGeometry(0.5, 0.5, 0.7));
-
-// Позиционируем сетку и меш
-barrelMesh.position.set(1.3, -0.35, 5);
-barrelEdges.position.set(1.3, 0, 5);
-
-// Добавляем в контейнер дома
-house.add(barrelMesh);
-house.add(barrelEdges);
-
-(function animation_filling_barrel() {
-  let customInterval = setInterval(() => {
-    barrelHeight += 0.1;
-
-    barrelMesh.geometry.dispose();
-    barrelMesh.geometry = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
-    barrelMesh.position.y += 0.05;
-
-    if (barrelHeight > 0.5) {
-      clearInterval(customInterval);
-    }
-  }, 3000);
+  house.add(skeletonMesh);
+  house.add(skeletonEdges);
 })();
 
-//---------------------------- Анимация дождя ----------------------
+(function creating_lawn() {
+  const lawnGeometry = new THREE.BoxGeometry(6.5, 0.2, 7.5);
+  const lawnMesh = new THREE.Mesh(lawnGeometry, new THREE.MeshBasicMaterial({ color: 'green' }));
+  
+  lawnMesh.position.y = -1;
+  house.add(lawnMesh);
+})();
 
-// Создаем массив капель дождя
-const rainCount = 10000; // количество капель
-const rainGeometry = new THREE.BufferGeometry();
-const positions = [];
-// Создаем материал для капель дождя
-const rainMaterial = new THREE.PointsMaterial({color: 0xaaaaaa, size: 0.2});
-// Создаем объект Points для дождя
-const rain = new THREE.Points(rainGeometry, rainMaterial);
+(function creating_roof() {
+  const roofGeometry = new THREE.ConeGeometry(3.5, 1.5, 4);
+  const roofMesh = new THREE.Mesh(roofGeometry, new THREE.MeshBasicMaterial({ color: 'darkblue' }));
+  const roofEdges = show_me_ribs(roofGeometry);
 
-for (let i = 0; i < rainCount; i++) {
-  // случайные позиции в области
-  const x = Math.random() * 100 - 50; // от -50 до +50 по X
-  const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
-  const z = Math.random() * 100 - 50; // от -50 до +50 по Z
+  roofMesh.position.y = roofEdges.position.y = 1.75;
+  roofMesh.rotation.y = roofEdges.rotation.y = Math.PI * 0.25;
 
-  positions.push(x, y, z);
-}
+  house.add(roofMesh);
+  house.add(roofEdges);
+})();
 
-rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+(function creating_door() {
+  const doorGeometry = new THREE.PlaneGeometry(1, 1.3);
+  const doorMesh = new THREE.Mesh(doorGeometry, new THREE.MeshBasicMaterial({ color: 'pink' }));
 
-(function rain_animation() {
-  requestAnimationFrame(rain_animation);
+  doorMesh.position.z = 2 + 0.01;
 
-  const positions = rain.geometry.attributes.position.array;
+  house.add(doorMesh);
+})();
 
-  for (let i = 0; i < positions.length; i +=3) {
-    // падаем вниз по Y
-    positions[i +1] -= Math.random() * 0.5; // скорость падения
+(function creating_door_handle() {
+  const doorHandleGeometry = new THREE.CircleGeometry(0.05);
+  const doorHandleMesh = new THREE.Mesh(doorHandleGeometry, new THREE.MeshBasicMaterial({ color: 'black' }));
 
-    // если капля упала ниже определенного уровня, возвращаем ее наверх
-    if (positions[i +1] < -10) {
-      positions[i +1] = Math.random() * 50 +10;
-    }
+  doorHandleMesh.position.set(-0.23, 0, 2 + 0.02);
+
+  house.add(doorHandleMesh);
+})();
+
+(function creating_barrel() {
+  let barrelHeight = 0.0;
+
+  const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
+  const barrelMesh = new THREE.Mesh(barrelShape, new THREE.MeshBasicMaterial({ color: 0xaaaaaa }));
+
+  const barrelEdges = show_me_ribs(new THREE.CylinderGeometry(0.5, 0.5, 0.7));
+
+  barrelMesh.position.set(1.3, -0.35, 5);
+  barrelEdges.position.set(1.3, 0, 5);
+
+  house.add(barrelMesh);
+  house.add(barrelEdges);
+
+  (function animation_filling_barrel() {
+    let customInterval = setInterval(() => {
+      barrelHeight += 0.1;
+
+      barrelMesh.geometry.dispose();
+      barrelMesh.geometry = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
+      barrelMesh.position.y += 0.05;
+
+      if (barrelHeight > 0.5) {
+        clearInterval(customInterval);
+      }
+    }, 3000);
+  })();
+})();
+
+(function creating_rain_animation() {
+  // Создаем массив капель дождя
+  const rainCount = 10000; // количество капель
+  const rainGeometry = new THREE.BufferGeometry();
+  const positions = [];
+  // Создаем материал для капель дождя
+  const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.2 });
+  // Создаем объект Points для дождя
+  const rain = new THREE.Points(rainGeometry, rainMaterial);
+
+  for (let i = 0; i < rainCount; i++) {
+    // случайные позиции в области
+    const x = Math.random() * 100 - 50; // от -50 до +50 по X
+    const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
+    const z = Math.random() * 100 - 50; // от -50 до +50 по Z
+
+    positions.push(x, y, z);
   }
 
-  // Обновляем атрибут позиции
-  rain.geometry.attributes.position.needsUpdate = true;
-})();
+  rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-scene.add(rain);
+  (function rain_animation() {
+    requestAnimationFrame(rain_animation);
+
+    const positions = rain.geometry.attributes.position.array;
+
+    for (let i = 0; i < positions.length; i +=3) {
+      // падаем вниз по Y
+      positions[i +1] -= Math.random() * 0.5; // скорость падения
+
+      // если капля упала ниже определенного уровня, возвращаем ее наверх
+      if (positions[i +1] < -10) {
+        positions[i +1] = Math.random() * 50 +10;
+      }
+    }
+
+    // Обновляем атрибут позиции
+    rain.geometry.attributes.position.needsUpdate = true;
+  })();
+
+  scene.add(rain);
+})();
