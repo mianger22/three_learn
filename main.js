@@ -20,7 +20,7 @@ document.body.appendChild(renderer.domElement);
 const house = new THREE.Group();
 scene.add(house);
 
-// --------------------------- Общая функция отрисовки ребер ---------------
+// ------------------------------ Общие данные -----------------------------
 
 function show_me_ribs(figureGeometry) {
     // Создаем геометрию для рёбер
@@ -32,6 +32,53 @@ function show_me_ribs(figureGeometry) {
 }
 
 // --------------------------- Создание объектов ----------------------------
+
+(function creating_rain_animation() {
+  // Создаем массив капель дождя
+  const rainCount = 10000; // количество капель
+  const rainGeometry = new THREE.BufferGeometry();
+  const positions = [];
+  // Создаем материал для капель дождя
+  const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.2 });
+  // Создаем объект Points для дождя
+  let rain = new THREE.Points(rainGeometry, rainMaterial);
+
+  for (let i = 0; i < rainCount; i++) {
+    // случайные позиции в области
+    const x = Math.random() * 100 - 50; // от -50 до +50 по X
+    const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
+    const z = Math.random() * 100 - 50; // от -50 до +50 по Z
+
+    positions.push(x, y, z);
+  }
+
+  rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+  (function rain_animation() {
+    requestAnimationFrame(rain_animation);
+
+    const positions = rain.geometry.attributes.position.array;
+
+    for (let i = 0; i < positions.length; i += 3) {
+      // падаем вниз по Y
+      positions[i +1] -= Math.random() * 0.5; // скорость падения
+
+      // если капля упала ниже определенного уровня, возвращаем ее наверх
+      if (positions[i +1] < -10) {
+        positions[i +1] = Math.random() * 50 +10;
+      }
+    }
+
+    // Обновляем атрибут позиции
+    rain.geometry.attributes.position.needsUpdate = true;
+  })();
+
+  scene.add(rain);
+
+  setTimeout(() => {
+    scene.remove(rain);
+  }, 20000);
+})();
 
 (function creating_skeleton_house() {
   const skeletonGeometry = new THREE.BoxGeometry(4, 2.5, 4);
@@ -107,47 +154,4 @@ function show_me_ribs(figureGeometry) {
       }
     }, 3000);
   })();
-})();
-
-(function creating_rain_animation() {
-  // Создаем массив капель дождя
-  const rainCount = 10000; // количество капель
-  const rainGeometry = new THREE.BufferGeometry();
-  const positions = [];
-  // Создаем материал для капель дождя
-  const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.2 });
-  // Создаем объект Points для дождя
-  const rain = new THREE.Points(rainGeometry, rainMaterial);
-
-  for (let i = 0; i < rainCount; i++) {
-    // случайные позиции в области
-    const x = Math.random() * 100 - 50; // от -50 до +50 по X
-    const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
-    const z = Math.random() * 100 - 50; // от -50 до +50 по Z
-
-    positions.push(x, y, z);
-  }
-
-  rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
-  (function rain_animation() {
-    requestAnimationFrame(rain_animation);
-
-    const positions = rain.geometry.attributes.position.array;
-
-    for (let i = 0; i < positions.length; i +=3) {
-      // падаем вниз по Y
-      positions[i +1] -= Math.random() * 0.5; // скорость падения
-
-      // если капля упала ниже определенного уровня, возвращаем ее наверх
-      if (positions[i +1] < -10) {
-        positions[i +1] = Math.random() * 50 +10;
-      }
-    }
-
-    // Обновляем атрибут позиции
-    rain.geometry.attributes.position.needsUpdate = true;
-  })();
-
-  scene.add(rain);
 })();
