@@ -41,7 +41,7 @@ let sunMesh;
 // --------------------------- Создание объектов ----------------------------
 
 (function creating_sun() {
-  const sunShape = new THREE.CircleGeometry(2);
+  const sunShape = new THREE.CircleGeometry(1.7);
   sunMesh = new THREE.Mesh(sunShape, new THREE.MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.0 }));
 
   sunMesh.position.set(5.3, 4.5, 0);
@@ -95,7 +95,13 @@ let sunMesh;
     scene.remove(rain);
     scene.background = new THREE.Color('lightblue');
 
-    sunMesh.material.opacity = '1.0';
+    const increasingOpacity = setInterval(() => {
+      sunMesh.material.opacity = +sunMesh.material.opacity + 0.1;
+
+      if (sunMesh.material.opacity === '1.0') {
+        clearInterval(increasingOpacity);
+      }
+    }, 50);
 
     melody_rain.pause();
     melody_sunny_morning.play();
