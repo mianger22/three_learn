@@ -15,8 +15,10 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(() => renderer.render(scene, camera));
 document.body.appendChild(renderer.domElement);
 
-const audio = document.getElementById('backgroundMusic');
-audio.play();
+const melody_rain = document.getElementById('melody_rain');
+const melody_sunny_morning = document.getElementById('melody_sunny_morning');
+
+melody_rain.play();
 
 // --------------------------- Создаём контейнер для дома -----------------
 
@@ -81,7 +83,8 @@ function show_me_ribs(figureGeometry) {
   setTimeout(() => {
     scene.remove(rain);
     scene.background = new THREE.Color('lightblue');
-    audio.pause();
+    melody_rain.pause();
+    melody_sunny_morning.play();
   }, 20000);
 })();
 
