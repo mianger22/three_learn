@@ -36,7 +36,18 @@ function show_me_ribs(figureGeometry) {
     return new THREE.LineSegments(edgesGeometry, lineMaterial);
 }
 
+let sunMesh;
+
 // --------------------------- Создание объектов ----------------------------
+
+(function creating_sun() {
+  const sunShape = new THREE.CircleGeometry(2);
+  sunMesh = new THREE.Mesh(sunShape, new THREE.MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.0 }));
+
+  sunMesh.position.set(5.3, 4.5, 0);
+
+  scene.add(sunMesh);
+})();
 
 (function creating_rain_animation() {
   // Создаем массив капель дождя
@@ -83,6 +94,9 @@ function show_me_ribs(figureGeometry) {
   setTimeout(() => {
     scene.remove(rain);
     scene.background = new THREE.Color('lightblue');
+
+    sunMesh.material.opacity = '1.0';
+
     melody_rain.pause();
     melody_sunny_morning.play();
   }, 20000);
