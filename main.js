@@ -78,6 +78,7 @@ function show_me_ribs(figureGeometry) {
   setTimeout(() => {
     scene.remove(rain);
     scene.background = new THREE.Color('lightblue');
+    document.getElementById('backgroundMusic').pause();
   }, 20000);
 })();
 
