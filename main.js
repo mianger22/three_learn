@@ -15,6 +15,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(() => renderer.render(scene, camera));
 document.body.appendChild(renderer.domElement);
 
+const audio = document.getElementById('backgroundMusic');
+audio.play();
+
 // --------------------------- Создаём контейнер для дома -----------------
 
 const house = new THREE.Group();
@@ -78,7 +81,7 @@ function show_me_ribs(figureGeometry) {
   setTimeout(() => {
     scene.remove(rain);
     scene.background = new THREE.Color('lightblue');
-    document.getElementById('backgroundMusic').pause();
+    audio.pause();
   }, 20000);
 })();
 
