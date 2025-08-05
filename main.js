@@ -36,7 +36,7 @@ function show_me_ribs(figureGeometry) {
     return new THREE.LineSegments(edgesGeometry, lineMaterial);
 }
 
-let sunMesh;
+let sunMesh, barrelMesh;
 
 // --------------------------- Создание объектов ----------------------------
 
@@ -47,65 +47,6 @@ let sunMesh;
   sunMesh.position.set(5.3, 4.5, 0);
 
   scene.add(sunMesh);
-})();
-
-(function creating_rain_animation() {
-  // Создаем массив капель дождя
-  const rainCount = 10000; // количество капель
-  const rainGeometry = new THREE.BufferGeometry();
-  const positions = [];
-  // Создаем материал для капель дождя
-  const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.2 });
-  // Создаем объект Points для дождя
-  let rain = new THREE.Points(rainGeometry, rainMaterial);
-
-  for (let i = 0; i < rainCount; i++) {
-    // случайные позиции в области
-    const x = Math.random() * 100 - 50; // от -50 до +50 по X
-    const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
-    const z = Math.random() * 100 - 50; // от -50 до +50 по Z
-
-    positions.push(x, y, z);
-  }
-
-  rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
-  (function rain_animation() {
-    requestAnimationFrame(rain_animation);
-
-    const positions = rain.geometry.attributes.position.array;
-
-    for (let i = 0; i < positions.length; i += 3) {
-      // падаем вниз по Y
-      positions[i +1] -= Math.random() * 0.5; // скорость падения
-
-      // если капля упала ниже определенного уровня, возвращаем ее наверх
-      if (positions[i +1] < -10) {
-        positions[i +1] = Math.random() * 50 +10;
-      }
-    }
-
-    // Обновляем атрибут позиции
-    rain.geometry.attributes.position.needsUpdate = true;
-  })();
-
-  scene.add(rain);
-
-  setTimeout(() => {
-    scene.remove(rain);
-    scene.background = new THREE.Color('lightblue');
-
-    const increasingOpacity = setInterval(() => {
-      sunMesh.material.opacity = +sunMesh.material.opacity + 0.1;
-
-      if (sunMesh.material.opacity === '1.0') {
-        clearInterval(increasingOpacity);
-      }
-    }, 50);
-
-    melody_rain.pause();
-    melody_sunny_morning.play();
-  }, 20000);
 })();
 
 (function creating_skeleton_house() {
@@ -159,7 +100,7 @@ let sunMesh;
   let barrelHeight = 0.0;
 
   const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
-  const barrelMesh = new THREE.Mesh(barrelShape, new THREE.MeshBasicMaterial({ color: 0xaaaaaa }));
+  barrelMesh = new THREE.Mesh(barrelShape, new THREE.MeshBasicMaterial({ color: 0xaaaaaa }));
 
   const barrelEdges = show_me_ribs(new THREE.CylinderGeometry(0.5, 0.5, 0.7));
 
@@ -183,3 +124,497 @@ let sunMesh;
     }, 3000);
   })();
 })();
+
+(function creating_rain_animation() {
+  // Создаем массив капель дождя
+  const rainCount = 10000; // количество капель
+  const rainGeometry = new THREE.BufferGeometry();
+  const positions = [];
+  // Создаем материал для капель дождя
+  const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.2 });
+  // Создаем объект Points для дождя
+  let rain = new THREE.Points(rainGeometry, rainMaterial);
+
+  for (let i = 0; i < rainCount; i++) {
+    // случайные позиции в области
+    const x = Math.random() * 100 - 50; // от -50 до +50 по X
+    const y = Math.random() * 50 + 10;   // от 10 до +60 по Y
+    const z = Math.random() * 100 - 50; // от -50 до +50 по Z
+
+    positions.push(x, y, z);
+  }
+
+  rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+  (function rain_animation() {
+    requestAnimationFrame(rain_animation);
+
+    const positions = rain.geometry.attributes.position.array;
+
+    for (let i = 0; i < positions.length; i += 3) {
+      // падаем вниз по Y
+      positions[i +1] -= Math.random() * 0.5; // скорость падения
+
+      // если капля упала ниже определенного уровня, возвращаем ее наверх
+      if (positions[i +1] < -10) {
+        positions[i +1] = Math.random() * 50 +10;
+      }
+    }
+
+    // Обновляем атрибут позиции
+    rain.geometry.attributes.position.needsUpdate = true;
+  })();
+
+  scene.add(rain);
+
+  setTimeout(() => {
+    scene.remove(rain);
+    scene.background = new THREE.Color('lightblue');
+
+    const increasingOpacity = setInterval(() => {
+      sunMesh.material.opacity = +sunMesh.material.opacity + 0.1;
+
+      if (sunMesh.material.opacity > 1) {
+        (function changing_color_rainwater() {
+          // Определяем граничные цвета
+          const startColor = new THREE.Color(0xaaaaaa);
+          const endColor = new THREE.Color(0x0077ff);
+          // Время анимации
+          const duration = 15000;
+          // Запоминаем время начала
+          let startTime = null;
+          // Флаг запуска анимации
+          let isAnimating = false;
+
+          // Запускаем анимацию
+          (() => {
+              isAnimating = true;
+              startTime = performance.now();
+              core();
+          })();
+
+          function core() {
+            if (!isAnimating) return;
+
+            const currentTime = performance.now();
+            const elapsed = currentTime - startTime;
+            let t = elapsed / duration; // прогресс от 0 до 1
+
+            if (t > 1) {
+                t = 1;
+                isAnimating = false; // завершить после достижения конца
+            }
+
+            // Интерполируем цвет вручную
+            barrelMesh.material.color.r = startColor.r + (endColor.r - startColor.r) * t;
+            barrelMesh.material.color.g = startColor.g + (endColor.g - startColor.g) * t;
+            barrelMesh.material.color.b = startColor.b + (endColor.b - startColor.b) * t;
+
+            if (t < 1) requestAnimationFrame(core);
+          }
+        })();
+
+        clearInterval(increasingOpacity);
+      }
+    }, 50);
+
+    melody_rain.pause();
+    melody_sunny_morning.play();
+  }, 20000);
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ### Что происходит:
+// - При клике по сцене запускается плавная смена цвета с красного (`startColor`) на синий (`endColor`) за примерно 5 секунд.
+// - Используется метод `lerpColors` объекта `THREE.Color`, который плавно интерполирует между двумя цветами по прогрессу `colorProgress`.
+// - Переменная `colorProgress` увеличивается каждый кадр до достижения значения `1`, после чего смена завершается.
+
+// ### Можно изменить:
+// - Время анимации — изменяя значение `colorChangeSpeed`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Конечно! Вместо использования метода `lerpColors`, вы можете реализовать плавную смену цвета вручную, интерполируя компоненты 
+// RGB (или HSL) цвета по отдельности. Это даст вам полный контроль над процессом.
+
+
+// ---
+
+// ### Итог:
+// - Вы вручную интерполируете компоненты RGB.
+// - Можно использовать `THREE.Color` для удобства.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Конечно! Вот пример простого кода на JavaScript, который за 10 секунд плавно меняет цвет с синего на красный. Он использует `requestAnimationFrame` для анимации и интерполирует цвет по времени.
+
+// ```html
+// <!DOCTYPE html>
+// <html lang="ru">
+// <head>
+// <meta charset="UTF-8" />
+// <title>Плавная смена цвета за 10 секунд</title>
+// <style>
+//   body { margin: 0; background: #000; }
+//   canvas { display: block; }
+// </style>
+// </head>
+// <body>
+
+// <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+// <script>
+// // Создаем сцену, камеру и рендерер
+// const scene = new THREE.Scene();
+// const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+// const renderer = new THREE.WebGLRenderer({ antialias: true });
+// renderer.setSize(window.innerWidth, window.innerHeight);
+// document.body.appendChild(renderer.domElement);
+
+// // Создаем куб
+// const geometry = new THREE.BoxGeometry(20, 20, 20);
+// const material = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // старт синий
+// const cube = new THREE.Mesh(geometry, material);
+// scene.add(cube);
+
+// camera.position.z = 50;
+
+
+
+
+// ### Что делает этот код:
+// - Создает сцену с кубом.
+// - При загрузке запускает анимацию.
+// - За 10 секунд плавно меняет цвет куба с синего (`#0000ff`) на красный (`#ff0000`).
+// - Использует `requestAnimationFrame` для плавности.
+
+// Вы можете запустить этот код в браузере — он выполнит задачу!
