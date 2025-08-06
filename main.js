@@ -58,26 +58,6 @@ let sunMesh, barrelMesh;
   house.add(skeletonEdges);
 })();
 
-(function creating_lawn() {
-  const lawnGeometry = new THREE.BoxGeometry(6.5, 0.2, 7.5);
-  const lawnMesh = new THREE.Mesh(lawnGeometry, new THREE.MeshBasicMaterial({ color: 'green' }));
-  
-  lawnMesh.position.y = -1;
-  house.add(lawnMesh);
-})();
-
-(function creating_roof() {
-  const roofGeometry = new THREE.ConeGeometry(3.5, 1.5, 4);
-  const roofMesh = new THREE.Mesh(roofGeometry, new THREE.MeshBasicMaterial({ color: 'darkblue' }));
-  const roofEdges = show_me_ribs(roofGeometry);
-
-  roofMesh.position.y = roofEdges.position.y = 1.75;
-  roofMesh.rotation.y = roofEdges.rotation.y = Math.PI * 0.25;
-
-  house.add(roofMesh);
-  house.add(roofEdges);
-})();
-
 (function creating_door() {
   const doorGeometry = new THREE.PlaneGeometry(1, 1.3);
   const doorMesh = new THREE.Mesh(doorGeometry, new THREE.MeshBasicMaterial({ color: 'pink' }));
@@ -94,6 +74,26 @@ let sunMesh, barrelMesh;
   doorHandleMesh.position.set(-0.23, 0, 2 + 0.02);
 
   house.add(doorHandleMesh);
+})();
+
+(function creating_roof() {
+  const roofGeometry = new THREE.ConeGeometry(3.5, 1.5, 4);
+  const roofMesh = new THREE.Mesh(roofGeometry, new THREE.MeshBasicMaterial({ color: 'darkblue' }));
+  const roofEdges = show_me_ribs(roofGeometry);
+
+  roofMesh.position.y = roofEdges.position.y = 1.75;
+  roofMesh.rotation.y = roofEdges.rotation.y = Math.PI * 0.25;
+
+  house.add(roofMesh);
+  house.add(roofEdges);
+})();
+
+(function creating_lawn() {
+  const lawnGeometry = new THREE.BoxGeometry(6.5, 0.2, 7.5);
+  const lawnMesh = new THREE.Mesh(lawnGeometry, new THREE.MeshBasicMaterial({ color: 'green' }));
+  
+  lawnMesh.position.y = -1;
+  house.add(lawnMesh);
 })();
 
 (function creating_barrel() {
@@ -169,49 +169,30 @@ let sunMesh, barrelMesh;
 
   setTimeout(() => {
     scene.remove(rain);
-    scene.background = new THREE.Color('lightblue');
 
     const increasingOpacity = setInterval(() => {
       sunMesh.material.opacity = +sunMesh.material.opacity + 0.1;
 
       if (sunMesh.material.opacity > 1) {
         (function changing_color_rainwater() {
-          // Определяем граничные цвета
-          const startColor = new THREE.Color(0xaaaaaa);
-          const endColor = new THREE.Color(0x0077ff);
-          // Время анимации
-          const duration = 15000;
-          // Запоминаем время начала
-          let startTime = null;
-          // Флаг запуска анимации
-          let isAnimating = false;
+          // Определяем конечный цвет
+          const endColor = new THREE.Color('#8999D0');
+          // Запоминаем время начала анимации
+          const startTime = performance.now();
 
-          // Запускаем анимацию
-          (() => {
-              isAnimating = true;
-              startTime = performance.now();
-              core();
+          (function core() {
+            // Делим разницу времен на время анимации
+            const progress = (performance.now() - startTime) / 15000; 
+
+            // Плавно меняем цвет окружающей среды и дождевой воды
+            scene.background.lerp(endColor, progress);
+            barrelMesh.material.color.lerp(endColor, progress);
+
+            if (progress < 1)  
+              requestAnimationFrame(core)
+            else 
+              return;
           })();
-
-          function core() {
-            if (!isAnimating) return;
-
-            const currentTime = performance.now();
-            const elapsed = currentTime - startTime;
-            let t = elapsed / duration; // прогресс от 0 до 1
-
-            if (t > 1) {
-                t = 1;
-                isAnimating = false; // завершить после достижения конца
-            }
-
-            // Интерполируем цвет вручную
-            barrelMesh.material.color.r = startColor.r + (endColor.r - startColor.r) * t;
-            barrelMesh.material.color.g = startColor.g + (endColor.g - startColor.g) * t;
-            barrelMesh.material.color.b = startColor.b + (endColor.b - startColor.b) * t;
-
-            if (t < 1) requestAnimationFrame(core);
-          }
         })();
 
         clearInterval(increasingOpacity);
@@ -222,399 +203,3 @@ let sunMesh, barrelMesh;
     melody_sunny_morning.play();
   }, 20000);
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ### Что происходит:
-// - При клике по сцене запускается плавная смена цвета с красного (`startColor`) на синий (`endColor`) за примерно 5 секунд.
-// - Используется метод `lerpColors` объекта `THREE.Color`, который плавно интерполирует между двумя цветами по прогрессу `colorProgress`.
-// - Переменная `colorProgress` увеличивается каждый кадр до достижения значения `1`, после чего смена завершается.
-
-// ### Можно изменить:
-// - Время анимации — изменяя значение `colorChangeSpeed`.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Конечно! Вместо использования метода `lerpColors`, вы можете реализовать плавную смену цвета вручную, интерполируя компоненты 
-// RGB (или HSL) цвета по отдельности. Это даст вам полный контроль над процессом.
-
-
-// ---
-
-// ### Итог:
-// - Вы вручную интерполируете компоненты RGB.
-// - Можно использовать `THREE.Color` для удобства.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Конечно! Вот пример простого кода на JavaScript, который за 10 секунд плавно меняет цвет с синего на красный. Он использует `requestAnimationFrame` для анимации и интерполирует цвет по времени.
-
-// ```html
-// <!DOCTYPE html>
-// <html lang="ru">
-// <head>
-// <meta charset="UTF-8" />
-// <title>Плавная смена цвета за 10 секунд</title>
-// <style>
-//   body { margin: 0; background: #000; }
-//   canvas { display: block; }
-// </style>
-// </head>
-// <body>
-
-// <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-// <script>
-// // Создаем сцену, камеру и рендерер
-// const scene = new THREE.Scene();
-// const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-// const renderer = new THREE.WebGLRenderer({ antialias: true });
-// renderer.setSize(window.innerWidth, window.innerHeight);
-// document.body.appendChild(renderer.domElement);
-
-// // Создаем куб
-// const geometry = new THREE.BoxGeometry(20, 20, 20);
-// const material = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // старт синий
-// const cube = new THREE.Mesh(geometry, material);
-// scene.add(cube);
-
-// camera.position.z = 50;
-
-
-
-
-// ### Что делает этот код:
-// - Создает сцену с кубом.
-// - При загрузке запускает анимацию.
-// - За 10 секунд плавно меняет цвет куба с синего (`#0000ff`) на красный (`#ff0000`).
-// - Использует `requestAnimationFrame` для плавности.
-
-// Вы можете запустить этот код в браузере — он выполнит задачу!
