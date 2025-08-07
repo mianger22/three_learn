@@ -36,6 +36,27 @@ function show_me_ribs(figureGeometry) {
     return new THREE.LineSegments(edgesGeometry, lineMaterial);
 }
 
+function changing_color(final_color) {
+  // Определяем конечный цвет
+  const endColor = new THREE.Color(final_color);
+  // Запоминаем время начала анимации
+  const startTime = performance.now();
+
+  (function core() {
+    // Делим разницу времен на время анимации
+    const progress = (performance.now() - startTime) / 15000; 
+
+    // Плавно меняем цвет окружающей среды и дождевой воды
+    scene.background.lerp(endColor, progress);
+    barrelMesh.material.color.lerp(endColor, progress);
+
+    if (progress < 1)  
+      requestAnimationFrame(core)
+    else 
+      return;
+  })();
+};
+
 let sunMesh, barrelMesh;
 
 // --------------------------- Создание объектов ----------------------------
@@ -175,24 +196,7 @@ let sunMesh, barrelMesh;
 
       if (sunMesh.material.opacity > 1) {
         (function changing_color_rainwater() {
-          // Определяем конечный цвет
-          const endColor = new THREE.Color('#8999D0');
-          // Запоминаем время начала анимации
-          const startTime = performance.now();
-
-          (function core() {
-            // Делим разницу времен на время анимации
-            const progress = (performance.now() - startTime) / 15000; 
-
-            // Плавно меняем цвет окружающей среды и дождевой воды
-            scene.background.lerp(endColor, progress);
-            barrelMesh.material.color.lerp(endColor, progress);
-
-            if (progress < 1)  
-              requestAnimationFrame(core)
-            else 
-              return;
-          })();
+          changing_color('#8999D0');
         })();
 
         clearInterval(increasingOpacity);
