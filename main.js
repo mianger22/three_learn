@@ -37,7 +37,7 @@ function show_me_ribs(figureGeometry) {
     return new THREE.LineSegments(edgesGeometry, lineMaterial);
 }
 
-function changing_color(final_color) {
+function changing_color(final_color, object, should_i_change_color_scene) {
   return new Promise((resolve, reject) => {
     // Определяем конечный цвет
     const endColor = new THREE.Color(final_color);
@@ -49,8 +49,8 @@ function changing_color(final_color) {
       const progress = (performance.now() - startTime) / 15000; 
 
       // Плавно меняем цвет окружающей среды и дождевой воды
-      scene.background.lerp(endColor, progress);
-      barrelMesh.material.color.lerp(endColor, progress);
+      if (should_i_change_color_scene === true) scene.background.lerp(endColor, progress);
+      object.material.color.lerp(endColor, progress);
 
       if (progress < 1)  
         requestAnimationFrame(core)
@@ -72,7 +72,6 @@ let sunMesh, barrelMesh;
 (function creating_sun() {
   const sunShape = new THREE.CircleGeometry(1.7);
   sunMesh = new THREE.Mesh(sunShape, new THREE.MeshBasicMaterial({ color: '#ffd398', transparent: true, opacity: 0.0 }));
-
   sunMesh.position.set(5.3, 4.5, 0);
 
   scene.add(sunMesh);
@@ -204,9 +203,10 @@ let sunMesh, barrelMesh;
 
       if (sunMesh.material.opacity > 1) {
         (function changing_color_rainwater() {
-          changing_color('#8999D0').then(() => {
+          changing_color('#8999D0', barrelMesh, true).then(() => {
             // console.log("Функция выполнена после завершения Promise");
-            changing_color('#007FFF');
+            changing_color('#61AFFC', barrelMesh, true);
+            changing_color('#fff37b', sunMesh, false)
             melody_early_morning.pause();
             melody_rustic_morning.play();
           });
