@@ -17,8 +17,6 @@ renderer.setAnimationLoop(() => renderer.render(scene, camera));
 document.body.appendChild(renderer.domElement);
 
 const melody_rain = document.getElementById('melody_rain');
-const melody_early_morning = document.getElementById('melody_early_morning');
-const melody_rustic_morning = document.getElementById('melody_rustic_morning');
 
 melody_rain.play();
 
@@ -154,4 +152,4 @@ let sunMesh, barrelMesh;
   })();
 })();
 
-creating_rain_animation(scene, sunMesh, changing_color, barrelMesh);
+creating_rain_animation(scene, sunMesh, changing_color, barrelMesh, melody_rain);

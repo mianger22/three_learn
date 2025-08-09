@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 
-export default function creating_rain_animation(scene, sunMesh, changing_color, barrelMesh) {
+const melody_early_morning = document.getElementById('melody_early_morning');
+const melody_rustic_morning = document.getElementById('melody_rustic_morning');
+
+export default function creating_rain_animation(scene, sunMesh, changing_color, barrelMesh, melody_rain) {
   // Создаем массив капель дождя
   const rainCount = 10000; // количество капель
   const rainGeometry = new THREE.BufferGeometry();
@@ -61,7 +64,7 @@ export default function creating_rain_animation(scene, sunMesh, changing_color, 
                 requestAnimationFrame(core);
 
                 if (scene.fog && scene.fog instanceof THREE.FogExp2 && fogFadeOut) {
-                  scene.fog.density -= 0.0001; // скорость исчезновения
+                  scene.fog.density -= 0.0005; // скорость исчезновения
 
                   if (scene.fog.density <= 0) {
                     scene.fog = null; // полностью убираем туман
