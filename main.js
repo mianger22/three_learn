@@ -205,9 +205,30 @@ let sunMesh, barrelMesh;
         (function changing_color_rainwater() {
           changing_color('#8999D0', barrelMesh, true).then(() => {
             // console.log("Функция выполнена после завершения Promise");
-            scene.fog = null;
+
+            // Постепенно убираем туман
+            (function fog_dispersal() {
+              let fogFadeOut = true;
+
+              (function core() {
+                requestAnimationFrame(core);
+
+                if (scene.fog && scene.fog instanceof THREE.FogExp2 && fogFadeOut) {
+                  scene.fog.density -= 0.0001; // скорость исчезновения
+
+                  if (scene.fog.density <= 0) {
+                    scene.fog = null; // полностью убираем туман
+                    fogFadeOut = false; // остановить дальнейшее уменьшение
+                  }
+                }
+              })();
+            })();
+
+            // Меняем цвета неба и солнца
             changing_color('#61AFFC', barrelMesh, true);
-            changing_color('#fff37b', sunMesh, false)
+            changing_color('#fff37b', sunMesh, false);
+
+            // Меняем музыку
             melody_early_morning.pause();
             melody_rustic_morning.play();
           });
@@ -221,3 +242,83 @@ let sunMesh, barrelMesh;
     melody_early_morning.play();
   }, 20000);
 })();
+
+
+
+
+// Конечно! Чтобы реализовать постепенное исчезновение тумана в `three.js`, можно использовать анимацию, которая по мере времени уменьшает интенсивность тумана или полностью убирает его.
+
+// Поскольку `THREE.FogExp2` не имеет свойства `density`, которое можно было бы плавно изменять, мы можем либо:
+
+// - Постепенно уменьшать `density` (если он есть),
+// - Или постепенно устанавливать `scene.fog` в `null`.
+
+// ### Вариант 1: Постепенное уменьшение плотности `density`
+
+// Если у вас используется `THREE.FogExp2`, то у него есть свойство `.density`, которое можно изменять.
+
+// Пример:
+
+// ```js
+// // Изначально установлен туман
+// scene.fog = new THREE.FogExp2(0x59472b, 0.1);
+
+// // В функции анимации постепенно уменьшаем density
+// let fogFadeOut = true;
+
+// function animate() {
+//   requestAnimationFrame(animate);
+
+//   if (scene.fog && scene.fog instanceof THREE.FogExp2 && fogFadeOut) {
+//     // уменьшаем density
+//     scene.fog.density -= 0.001; // скорость исчезновения
+//     if (scene.fog.density <= 0) {
+//       scene.fog = null; // полностью убираем туман
+//       fogFadeOut = false; // остановить дальнейшее уменьшение
+//     }
+//   }
+
+//   renderer.render(scene, camera);
+// }
+// ```
+
+// ### Вариант 2: Постепенное исчезновение через интерполяцию
+
+// Если хотите более плавное исчезновение, можно использовать переменную времени и интерполировать свойство `.density` или просто через `lerp`.
+
+// ---
+
+// ### Полный пример с плавным исчезновением тумана
+
+// ```js
+// // Изначальный туман
+// scene.fog = new THREE.FogExp2(0x59472b, 0.1);
+
+// // Переменная для контроля исчезновения
+// let fogFadeProgress = 0; // от 0 до 1
+
+// function animate() {
+//   requestAnimationFrame(animate);
+
+//   if (scene.fog && scene.fog instanceof THREE.FogExp2) {
+//     // увеличиваем прогресс исчезновения
+//     fogFadeProgress += 0.005; // скорость исчезновения
+
+//     if (fogFadeProgress >=1) {
+//       scene.fog = null; // полностью убираем туман
+//     } else {
+//       // интерполируем density от начального к нулю
+//       scene.fog.density = THREE.MathUtils.lerp(0.1, 0, fogFadeProgress);
+//     }
+//   }
+
+//   renderer.render(scene, camera);
+// }
+// ```
+
+// ### Итог:
+// - Для `THREE.FogExp2` — меняйте свойство `.density`.
+// - Для `THREE.Fog` — можно установить `scene.fog = null`.
+// - Используйте переменную времени или прогресс для плавного изменения.
+
+// Если нужно — я помогу адаптировать под ваш конкретный сценарий!
