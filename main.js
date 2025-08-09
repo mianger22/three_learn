@@ -16,7 +16,8 @@ renderer.setAnimationLoop(() => renderer.render(scene, camera));
 document.body.appendChild(renderer.domElement);
 
 const melody_rain = document.getElementById('melody_rain');
-const melody_sunny_morning = document.getElementById('melody_sunny_morning');
+const melody_early_morning = document.getElementById('melody_early_morning');
+const melody_rustic_morning = document.getElementById('melody_rustic_morning');
 
 melody_rain.play();
 
@@ -37,24 +38,31 @@ function show_me_ribs(figureGeometry) {
 }
 
 function changing_color(final_color) {
-  // Определяем конечный цвет
-  const endColor = new THREE.Color(final_color);
-  // Запоминаем время начала анимации
-  const startTime = performance.now();
+  return new Promise((resolve, reject) => {
+    // Определяем конечный цвет
+    const endColor = new THREE.Color(final_color);
+    // Запоминаем время начала анимации
+    const startTime = performance.now();
+    // Выполняем основной функционал
+    (function core() {
+      // Делим разницу времен на время анимации
+      const progress = (performance.now() - startTime) / 15000; 
 
-  (function core() {
-    // Делим разницу времен на время анимации
-    const progress = (performance.now() - startTime) / 15000; 
+      // Плавно меняем цвет окружающей среды и дождевой воды
+      scene.background.lerp(endColor, progress);
+      barrelMesh.material.color.lerp(endColor, progress);
 
-    // Плавно меняем цвет окружающей среды и дождевой воды
-    scene.background.lerp(endColor, progress);
-    barrelMesh.material.color.lerp(endColor, progress);
-
-    if (progress < 1)  
-      requestAnimationFrame(core)
-    else 
-      return;
-  })();
+      if (progress < 1)  
+        requestAnimationFrame(core)
+      else 
+        return;
+    })();
+    // Вызываем resolve при успешном завершении
+    setTimeout(() => {
+      // console.log("Задача выполнена");
+      resolve();
+    }, 15000);
+  });
 };
 
 let sunMesh, barrelMesh;
@@ -63,7 +71,7 @@ let sunMesh, barrelMesh;
 
 (function creating_sun() {
   const sunShape = new THREE.CircleGeometry(1.7);
-  sunMesh = new THREE.Mesh(sunShape, new THREE.MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.0 }));
+  sunMesh = new THREE.Mesh(sunShape, new THREE.MeshBasicMaterial({ color: '#ffd398', transparent: true, opacity: 0.0 }));
 
   sunMesh.position.set(5.3, 4.5, 0);
 
@@ -196,7 +204,12 @@ let sunMesh, barrelMesh;
 
       if (sunMesh.material.opacity > 1) {
         (function changing_color_rainwater() {
-          changing_color('#8999D0');
+          changing_color('#8999D0').then(() => {
+            // console.log("Функция выполнена после завершения Promise");
+            changing_color('#007FFF');
+            melody_early_morning.pause();
+            melody_rustic_morning.play();
+          });
         })();
 
         clearInterval(increasingOpacity);
@@ -204,6 +217,6 @@ let sunMesh, barrelMesh;
     }, 50);
 
     melody_rain.pause();
-    melody_sunny_morning.play();
+    melody_early_morning.play();
   }, 20000);
 })();
