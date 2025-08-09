@@ -205,6 +205,7 @@ let sunMesh, barrelMesh;
         (function changing_color_rainwater() {
           changing_color('#8999D0', barrelMesh, true).then(() => {
             // console.log("Функция выполнена после завершения Promise");
+            scene.fog = null;
             changing_color('#61AFFC', barrelMesh, true);
             changing_color('#fff37b', sunMesh, false)
             melody_early_morning.pause();
