@@ -75,7 +75,7 @@ export default function creating_rain_animation(scene, sunMesh, changing_color, 
             })();
 
             // Меняем цвета неба и солнца
-            changing_color('#61AFFC', barrelMesh, true);
+            changing_color('#A6D1FD', barrelMesh, true);
             changing_color('#fff37b', sunMesh, false);
 
             // Меняем музыку
