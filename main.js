@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import creating_rain_animation from "./scripts/creating_rain_animation";
+import creating_sun from './scripts/creating_sun';
 
 // ------------------- Настройка проекта -------------------------------
 
@@ -22,7 +23,7 @@ melody_rain.play();
 
 // --------------------------- Создаём контейнер для дома -----------------
 
-const house = new THREE.Group();
+export const house = new THREE.Group();
 scene.add(house);
 
 // ------------------------------ Общие данные -----------------------------
@@ -37,7 +38,7 @@ function setState(newState) {
   Object.assign(state, newState);
 }
 
-function show_me_ribs(figureGeometry) {
+export function show_me_ribs(figureGeometry) {
     // Создаем геометрию для рёбер
     const edgesGeometry = new THREE.EdgesGeometry(figureGeometry);
     // Создаем материал для линий рёбер
@@ -78,28 +79,7 @@ let barrelMesh;
 
 // --------------------------- Создание объектов ----------------------------
 
-(function creating_sun() {  
-  const spriteTextureUrl = 'https://threejs.org/examples/textures/sprites/disc.png';
-  const spriteTextureLoader = new THREE.TextureLoader();
-
-  spriteTextureLoader.load(spriteTextureUrl, (texture) => {
-    const spriteMaterial = new THREE.SpriteMaterial({ 
-      map: texture,
-      color: 0xffff00,
-      blending: THREE.AdditiveBlending,
-      transparent: true, 
-      opacity: 0.0
-    });
-
-    const sunMesh = new THREE.Sprite(spriteMaterial);
-    sunMesh.scale.set(2.5, 2.5, 1); // размер свечения
-    sunMesh.position.set(5.3, 4.5, 0);
-
-    setState({ sunMesh: sunMesh });
-
-    scene.add(sunMesh);
-  });
-})();
+creating_sun(setState, scene);
 
 (function creating_skeleton_house() {
   const skeletonGeometry = new THREE.BoxGeometry(4, 2.5, 4);
