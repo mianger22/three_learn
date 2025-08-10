@@ -27,6 +27,16 @@ scene.add(house);
 
 // ------------------------------ Общие данные -----------------------------
 
+// Объект состояния
+const state = {
+  sunMesh: undefined,
+};
+
+// Функция для обновления состояния
+function setState(newState) {
+  Object.assign(state, newState);
+}
+
 function show_me_ribs(figureGeometry) {
     // Создаем геометрию для рёбер
     const edgesGeometry = new THREE.EdgesGeometry(figureGeometry);
@@ -64,16 +74,31 @@ function changing_color(final_color, object, should_i_change_color_scene) {
   });
 };
 
-let sunMesh, barrelMesh;
+let barrelMesh;
 
 // --------------------------- Создание объектов ----------------------------
 
-(function creating_sun() {
-  const sunShape = new THREE.CircleGeometry(1.7);
-  sunMesh = new THREE.Mesh(sunShape, new THREE.MeshBasicMaterial({ color: '#ffd398', transparent: true, opacity: 0.0 }));
-  sunMesh.position.set(5.3, 4.5, 0);
+(function creating_sun() {  
+  const spriteTextureUrl = 'https://threejs.org/examples/textures/sprites/disc.png';
+  const spriteTextureLoader = new THREE.TextureLoader();
 
-  scene.add(sunMesh);
+  spriteTextureLoader.load(spriteTextureUrl, (texture) => {
+    const spriteMaterial = new THREE.SpriteMaterial({ 
+      map: texture,
+      color: 0xffff00,
+      blending: THREE.AdditiveBlending,
+      transparent: true, 
+      opacity: 0.0
+    });
+
+    const sunMesh = new THREE.Sprite(spriteMaterial);
+    sunMesh.scale.set(2.5, 2.5, 1); // размер свечения
+    sunMesh.position.set(5.3, 4.5, 0);
+
+    setState({ sunMesh: sunMesh });
+
+    scene.add(sunMesh);
+  });
 })();
 
 (function creating_skeleton_house() {
@@ -152,4 +177,4 @@ let sunMesh, barrelMesh;
   })();
 })();
 
-creating_rain_animation(scene, sunMesh, changing_color, barrelMesh, melody_rain);
+creating_rain_animation(scene, changing_color, barrelMesh, melody_rain, state);

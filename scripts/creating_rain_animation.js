@@ -3,7 +3,7 @@ import * as THREE from 'three';
 const melody_early_morning = document.getElementById('melody_early_morning');
 const melody_rustic_morning = document.getElementById('melody_rustic_morning');
 
-export default function creating_rain_animation(scene, sunMesh, changing_color, barrelMesh, melody_rain) {
+export default function creating_rain_animation(scene, changing_color, barrelMesh, melody_rain, state) {
   // Создаем массив капель дождя
   const rainCount = 10000; // количество капель
   const rainGeometry = new THREE.BufferGeometry();
@@ -49,6 +49,7 @@ export default function creating_rain_animation(scene, sunMesh, changing_color, 
     scene.remove(rain);
 
     const increasingOpacity = setInterval(() => {
+      let sunMesh = state.sunMesh;
       sunMesh.material.opacity = +sunMesh.material.opacity + 0.1;
 
       if (sunMesh.material.opacity > 1) {
