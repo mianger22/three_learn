@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
-export default function creating_barrel(house, barrelMesh, show_me_ribs) {
+export default function creating_barrel(house, show_me_ribs, state, setState) {
+  let barrelMesh = state.barrelMesh;
   let barrelHeight = 0.0;
 
   const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
@@ -10,6 +11,8 @@ export default function creating_barrel(house, barrelMesh, show_me_ribs) {
 
   barrelMesh.position.set(1.3, -0.35, 5);
   barrelEdges.position.set(1.3, 0, 5);
+
+  setState({ barrelMesh: barrelMesh });
 
   house.add(barrelMesh);
   house.add(barrelEdges);

@@ -37,6 +37,7 @@ scene.add(house);
 // Объект состояния
 const state = {
   sunMesh: undefined,
+  barrelMesh: undefined
 };
 
 // Функция для обновления состояния
@@ -55,6 +56,7 @@ export function show_me_ribs(figureGeometry) {
 
 function changing_color(final_color, object, should_i_change_color_scene) {
   return new Promise((resolve, reject) => {
+    debugger
     // Определяем конечный цвет
     const endColor = new THREE.Color(final_color);
     // Запоминаем время начала анимации
@@ -81,8 +83,6 @@ function changing_color(final_color, object, should_i_change_color_scene) {
   });
 };
 
-let barrelMesh;
-
 // --------------------------- Создание объектов ----------------------------
 
 creating_sun(setState, scene);
@@ -91,5 +91,5 @@ creating_door(house);
 creating_door_handle(house);
 creating_roof(house, show_me_ribs);
 creating_lawn(house);
-creating_barrel(house, barrelMesh, show_me_ribs);
-creating_rain_animation(scene, changing_color, barrelMesh, melody_rain, state);
+creating_barrel(house, show_me_ribs, state, setState);
+creating_rain_animation(scene, changing_color, melody_rain, state, setState);
