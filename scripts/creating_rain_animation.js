@@ -4,7 +4,7 @@ const melody_early_morning = document.getElementById('melody_early_morning');
 const melody_rustic_morning = document.getElementById('melody_rustic_morning');
 
 export default function creating_rain_animation(
-  scene, changing_color, melody_rain, state, setState) {
+  scene, changing_color, melody_rain, state) {
   let barrelMesh = state.barrelMesh;
   
   // Создаем массив капель дождя

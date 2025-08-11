@@ -15,7 +15,20 @@ export default function creating_sun(setState, scene) {
 
     const sunMesh = new THREE.Sprite(spriteMaterial);
     sunMesh.scale.set(2.5, 2.5, 1); // размер свечения
-    sunMesh.position.set(5.3, 4.5, 0);
+
+    (function movement_sun() {
+      const radius = 6;
+      let angle = 3;
+
+      (function core() {
+        requestAnimationFrame(core);
+
+        // Обновляем позицию солнца по кругу (по часовой стрелке)
+        angle -= 0.0007; // уменьшение угла для движения по часовой
+        sunMesh.position.x = Math.cos(angle) * radius;
+        sunMesh.position.y = Math.sin(angle) * radius;
+      })();
+    })();
 
     setState({ sunMesh: sunMesh });
 

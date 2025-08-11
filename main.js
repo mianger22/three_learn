@@ -56,7 +56,6 @@ export function show_me_ribs(figureGeometry) {
 
 function changing_color(final_color, object, should_i_change_color_scene) {
   return new Promise((resolve, reject) => {
-    debugger
     // Определяем конечный цвет
     const endColor = new THREE.Color(final_color);
     // Запоминаем время начала анимации
@@ -92,4 +91,4 @@ creating_door_handle(house);
 creating_roof(house, show_me_ribs);
 creating_lawn(house);
 creating_barrel(house, show_me_ribs, state, setState);
-creating_rain_animation(scene, changing_color, melody_rain, state, setState);
+creating_rain_animation(scene, changing_color, melody_rain, state);
