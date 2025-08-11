@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import creating_rain_animation from "./scripts/creating_rain_animation";
 import creating_sun from './scripts/creating_sun';
+import creating_skeleton_house from './scripts/creating_skeleton_house';
+import creating_door from './scripts/creating_door';
+import creating_door_handle from './scripts/creating_door_handle';
+import creating_roof from './scripts/creating_roof';
+import creating_lawn from './scripts/creating_lawn';
+import creating_barrel from './scripts/creating_barrel';
 
 // ------------------- Настройка проекта -------------------------------
 
@@ -80,81 +86,10 @@ let barrelMesh;
 // --------------------------- Создание объектов ----------------------------
 
 creating_sun(setState, scene);
-
-(function creating_skeleton_house() {
-  const skeletonGeometry = new THREE.BoxGeometry(4, 2.5, 4);
-  const skeletonMesh = new THREE.Mesh(skeletonGeometry, new THREE.MeshBasicMaterial({ color: 'brown' }));
-  const skeletonEdges = show_me_ribs(skeletonGeometry);
-
-  house.add(skeletonMesh);
-  house.add(skeletonEdges);
-})();
-
-(function creating_door() {
-  const doorGeometry = new THREE.PlaneGeometry(1, 1.3);
-  const doorMesh = new THREE.Mesh(doorGeometry, new THREE.MeshBasicMaterial({ color: 'pink' }));
-
-  doorMesh.position.z = 2 + 0.01;
-
-  house.add(doorMesh);
-})();
-
-(function creating_door_handle() {
-  const doorHandleGeometry = new THREE.CircleGeometry(0.05);
-  const doorHandleMesh = new THREE.Mesh(doorHandleGeometry, new THREE.MeshBasicMaterial({ color: 'black' }));
-
-  doorHandleMesh.position.set(-0.23, 0, 2 + 0.02);
-
-  house.add(doorHandleMesh);
-})();
-
-(function creating_roof() {
-  const roofGeometry = new THREE.ConeGeometry(3.5, 1.5, 4);
-  const roofMesh = new THREE.Mesh(roofGeometry, new THREE.MeshBasicMaterial({ color: 'darkblue' }));
-  const roofEdges = show_me_ribs(roofGeometry);
-
-  roofMesh.position.y = roofEdges.position.y = 1.75;
-  roofMesh.rotation.y = roofEdges.rotation.y = Math.PI * 0.25;
-
-  house.add(roofMesh);
-  house.add(roofEdges);
-})();
-
-(function creating_lawn() {
-  const lawnGeometry = new THREE.BoxGeometry(6.5, 0.2, 7.5);
-  const lawnMesh = new THREE.Mesh(lawnGeometry, new THREE.MeshBasicMaterial({ color: 'green' }));
-  
-  lawnMesh.position.y = -1;
-  house.add(lawnMesh);
-})();
-
-(function creating_barrel() {
-  let barrelHeight = 0.0;
-
-  const barrelShape = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
-  barrelMesh = new THREE.Mesh(barrelShape, new THREE.MeshBasicMaterial({ color: 0xaaaaaa }));
-
-  const barrelEdges = show_me_ribs(new THREE.CylinderGeometry(0.5, 0.5, 0.7));
-
-  barrelMesh.position.set(1.3, -0.35, 5);
-  barrelEdges.position.set(1.3, 0, 5);
-
-  house.add(barrelMesh);
-  house.add(barrelEdges);
-
-  (function animation_filling_barrel() {
-    let customInterval = setInterval(() => {
-      barrelHeight += 0.1;
-
-      barrelMesh.geometry.dispose();
-      barrelMesh.geometry = new THREE.CylinderGeometry(0.495, 0.495, barrelHeight);
-      barrelMesh.position.y += 0.05;
-
-      if (barrelHeight > 0.5) {
-        clearInterval(customInterval);
-      }
-    }, 3000);
-  })();
-})();
-
+creating_skeleton_house(house, show_me_ribs);
+creating_door(house);
+creating_door_handle(house);
+creating_roof(house, show_me_ribs);
+creating_lawn(house);
+creating_barrel(house, barrelMesh, show_me_ribs);
 creating_rain_animation(scene, changing_color, barrelMesh, melody_rain, state);
